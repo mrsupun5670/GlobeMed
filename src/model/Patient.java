@@ -1,6 +1,9 @@
 package model;
 
-public class Patient {
+import visitor.MedicalDataElement;
+import visitor.MedicalDataVisitor;
+
+public class Patient implements MedicalDataElement {
     private String id;
     private String name;
     private int age;
@@ -10,6 +13,7 @@ public class Patient {
     private String disease;
     private String medicalHistory;
     private String treatmentPlan;
+    private String assignedDoctorId;
 
     public Patient(String id, String name, int age, String gender, String contact,
                    String bloodGroup, String disease, String medicalHistory, String treatmentPlan) {
@@ -22,15 +26,17 @@ public class Patient {
         this.disease = disease;
         this.medicalHistory = medicalHistory;
         this.treatmentPlan = treatmentPlan;
+        this.assignedDoctorId = "DOC001";
     }
     
     public Patient(String id, String name, String disease, int age, String contact) {
-    this.id = id;
-    this.name = name;
-    this.age = age;
-    this.contact = contact;
-    this.disease = disease;
-}
+        this.id = id;
+        this.name = name;
+        this.age = age;
+        this.contact = contact;
+        this.disease = disease;
+        this.assignedDoctorId = "DOC001";
+    }
 
 
     public String getId() { return id; }
@@ -42,4 +48,18 @@ public class Patient {
     public String getDisease() { return disease; }
     public String getMedicalHistory() { return medicalHistory; }
     public String getTreatmentPlan() { return treatmentPlan; }
+    public String getAssignedDoctorId() { return assignedDoctorId; }
+    
+    public void setAssignedDoctorId(String assignedDoctorId) { 
+        this.assignedDoctorId = assignedDoctorId; 
+    }
+    
+    public String getPhone() { 
+        return contact; 
+    }
+    
+    @Override
+    public void accept(MedicalDataVisitor visitor) {
+        visitor.visitPatient(this);
+    }
 }

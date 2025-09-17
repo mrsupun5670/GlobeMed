@@ -14,11 +14,12 @@ import static model.Role.DOCTOR;
 import static model.Role.NURSE;
 import static model.Role.PHARMACIST;
 import model.User;
-import permissions.AdminPermission;
-import permissions.DoctorPermission;
-import permissions.NursePermission;
-import permissions.PharmacistPermission;
-import permissions.RolePermission;
+import bridge.AdminPermission;
+import bridge.DoctorPermission;
+import bridge.NursePermission;
+import bridge.PharmacistPermission;
+import bridge.RolePermission;
+import javax.swing.JOptionPane;
 import util.CustomMessage;
 
 public class Home extends javax.swing.JFrame {
@@ -47,6 +48,7 @@ public class Home extends javax.swing.JFrame {
 
 // 3. Inject mediator into appointments
         appointments.setMediator(appointmentMediator);
+        appointments.setCurrentUser(user);
         dashboard = new Dashboard();
         billing = new Billing();
         medicalReports = new MedicalReports();
@@ -66,7 +68,7 @@ public class Home extends javax.swing.JFrame {
                 permission = new AdminPermission();
                 break;
             case DOCTOR:
-                permission = new DoctorPermission();
+                permission = new DoctorPermission(user.getUsername());
                 break;
             case NURSE:
                 permission = new NursePermission();
@@ -300,7 +302,14 @@ public class Home extends javax.swing.JFrame {
 
     private void jLabel11MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel11MouseClicked
         if (evt.getClickCount() == 1) {
-            showPanel(billing);
+            // Only admin and nurses can access billing
+            if (user.getRole() == model.Role.ADMIN || user.getRole() == model.Role.NURSE) {
+                showPanel(billing);
+            } else {
+                JOptionPane.showMessageDialog(this, 
+                    "Access Denied: You don't have permission to access Billing.", 
+                    "Access Denied", JOptionPane.WARNING_MESSAGE);
+            }
         }
     }//GEN-LAST:event_jLabel11MouseClicked
 
@@ -318,13 +327,29 @@ public class Home extends javax.swing.JFrame {
 
     private void jLabel12MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel12MouseClicked
         if (evt.getClickCount() == 1) {
-            showPanel(staff);
+            // Only admin can access staff management
+            if (user.getRole() == model.Role.ADMIN) {
+                showPanel(staff);
+            } else {
+                JOptionPane.showMessageDialog(this, 
+                    "Access Denied: You don't have permission to access Staff Management.", 
+                    "Access Denied", JOptionPane.WARNING_MESSAGE);
+            }
         }
     }//GEN-LAST:event_jLabel12MouseClicked
 
     private void jLabel13MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel13MouseClicked
         if (evt.getClickCount() == 1) {
-            showPanel(medicalReports);
+            // Admin, doctors, and nurses can access medical reports
+            if (user.getRole() == model.Role.ADMIN || 
+                user.getRole() == model.Role.DOCTOR || 
+                user.getRole() == model.Role.NURSE) {
+                showPanel(medicalReports);
+            } else {
+                JOptionPane.showMessageDialog(this, 
+                    "Access Denied: You don't have permission to access Medical Reports.", 
+                    "Access Denied", JOptionPane.WARNING_MESSAGE);
+            }
         }    }//GEN-LAST:event_jLabel13MouseClicked
 
     private void jLabel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseClicked

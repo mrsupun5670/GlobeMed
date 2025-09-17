@@ -4,11 +4,15 @@
  * and open the template in the editor.
  */
 package gui;
+
 import auth.AuditLogHandler;
 import auth.AuthHandler;
 import auth.InputValidationHandler;
 import auth.PasswordValidationHandler;
 import auth.UserExistenceHandler;
+import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatLaf;
+import com.formdev.flatlaf.FlatLightLaf;
 import javax.swing.JOptionPane;
 import model.User;
 import util.DBData;
@@ -18,7 +22,6 @@ public class LoginPage extends javax.swing.JFrame {
     public LoginPage() {
         initComponents();
     }
-
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -111,68 +114,43 @@ public class LoginPage extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
 
         String username = userTextField.getText().trim();
-    String password = new String(passwordField.getPassword());
+        String password = new String(passwordField.getPassword());
 
-    AuthHandler chain = new InputValidationHandler();
-    chain.setNext(new UserExistenceHandler())
-         .setNext(new PasswordValidationHandler())
-         .setNext(new AuditLogHandler());
+        AuthHandler chain = new InputValidationHandler();
+        chain.setNext(new UserExistenceHandler())
+                .setNext(new PasswordValidationHandler())
+                .setNext(new AuditLogHandler());
 
-    if (chain.handle(username, password)) {
-        User user = DBData.users().stream()
-                          .filter(u -> u.getUsername().equals(username))
-                          .findFirst().orElse(null);
+        if (chain.handle(username, password)) {
+            User user = DBData.users().stream()
+                    .filter(u -> u.getUsername().equals(username))
+                    .findFirst().orElse(null);
 
-        JOptionPane.showMessageDialog(this,
-                "Welcome " + user.getUsername() + "!\nRole: " + user.getRole(),
-                "Login Successful", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                    "Welcome " + user.getUsername() + "!\nRole: " + user.getRole(),
+                    "Login Successful", JOptionPane.INFORMATION_MESSAGE);
 
-        this.dispose();
-        Home home = new Home(user);
-        home.setVisible(true);
-        home.setLocationRelativeTo(null);
-    } else {
-        passwordField.setText("");
-    }
+            this.dispose();
+            Home home = new Home(user);
+            home.setVisible(true);
+            home.setLocationRelativeTo(null);
+        } else {
+            passwordField.setText("");
+        }
 
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        
+
         userTextField.setText("");
         passwordField.setText("");
 
     }//GEN-LAST:event_jButton2ActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(LoginPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(LoginPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(LoginPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(LoginPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        //</editor-fold>
-
-        /* Create and display the form */
+       
+        FlatLightLaf.setup();
+        
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new LoginPage().setVisible(true);

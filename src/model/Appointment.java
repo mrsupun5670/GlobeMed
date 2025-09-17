@@ -1,6 +1,9 @@
 package model;
 
-public class Appointment {
+import visitor.MedicalDataElement;
+import visitor.MedicalDataVisitor;
+
+public class Appointment implements MedicalDataElement {
 
     private String id;
     private String patientId;
@@ -61,5 +64,10 @@ public class Appointment {
     @Override
     public String toString() {
         return id + " | " + patientId + " | " + doctorId + " | " + department + " | " + type + " | " + date + " " + time;
+    }
+    
+    @Override
+    public void accept(MedicalDataVisitor visitor) {
+        visitor.visitAppointment(this);
     }
 }

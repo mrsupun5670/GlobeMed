@@ -5,8 +5,10 @@ import java.awt.event.MouseEvent;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import model.Patient;
-import permissions.RolePermission;
+import bridge.RolePermission;
 import util.DBData;
+import java.util.List;
+import java.util.ArrayList;
 
 public class PatientRecords extends javax.swing.JPanel {
 
@@ -72,7 +74,11 @@ public class PatientRecords extends javax.swing.JPanel {
         model = (DefaultTableModel) jTable1.getModel();
         model.setRowCount(0);
 
-        for (Patient p : DBData.patients().values()) {
+        // Use Bridge pattern to get only accessible patients based on role
+        List<Patient> allPatients = new ArrayList<>(DBData.patients().values());
+        List<Patient> accessiblePatients = permission.getAccessiblePatients(allPatients);
+
+        for (Patient p : accessiblePatients) {
             model.addRow(new Object[]{p.getId(), p.getName(), p.getAge(), p.getContact()});
         }
     }

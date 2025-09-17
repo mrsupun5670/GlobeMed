@@ -1,11 +1,10 @@
 package model;
 
-import permissions.PermissionComponent;
-import permissions.Role;
+import composite.PermissionComponent;
+import composite.Role;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class StaffModel {
     private String id;
@@ -17,7 +16,12 @@ public class StaffModel {
         this.id = id;
         this.name = name;
         this.role = role;
-        this.customPermissions = new ArrayList<>(role != null ? role.getPermissions() : List.of()); 
+        this.customPermissions = new ArrayList<>();
+        if (role != null) {
+            for (String permission : role.getPermissions()) {
+                this.customPermissions.add(new composite.Permission(permission));
+            }
+        } 
     }
 
     public String getId() { return id; }
@@ -46,9 +50,12 @@ public class StaffModel {
 
    public String getPermissionsString() {
     if (customPermissions == null || customPermissions.isEmpty()) return "";
-    return customPermissions.stream()
-            .map(PermissionComponent::getName)
-            .collect(Collectors.joining(", "));
+    StringBuilder result = new StringBuilder();
+    for (int i = 0; i < customPermissions.size(); i++) {
+        if (i > 0) result.append(", ");
+        result.append(customPermissions.get(i).getName());
+    }
+    return result.toString();
 }
 
 }

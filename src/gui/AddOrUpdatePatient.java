@@ -2,7 +2,7 @@ package gui;
 
 import javax.swing.JOptionPane;
 import model.Patient;
-import permissions.RolePermission;
+import bridge.RolePermission;
 import util.DBData;
 
 public class AddOrUpdatePatient extends javax.swing.JFrame {

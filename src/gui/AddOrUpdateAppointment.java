@@ -72,19 +72,29 @@ public class AddOrUpdateAppointment extends javax.swing.JFrame {
     }
 
     private void saveAppointment() {
-        String appointmentId = pi.getText();
+        String appointmentId = pi.getText().trim();
         String patient = (String) jComboBox1.getSelectedItem();
-        String patientId = patient.split(" - ")[0];
-
         String doctor = (String) jComboBox2.getSelectedItem();
-        String doctorId = doctor.split(" - ")[0];
-
         String department = (String) jComboBox3.getSelectedItem();
         String type = (String) jComboBox4.getSelectedItem();
-        String date = pi7.getText();
-        String time = pi6.getText();
+        String date = pi7.getText().trim();
+        String time = pi6.getText().trim();
+        String notes = jTextArea1.getText().trim();
+
+        // Validation
+        if (appointmentId.isEmpty() || date.isEmpty() || time.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Appointment ID, Date, and Time are required!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        if (patient == null || doctor == null || department == null || type == null) {
+            JOptionPane.showMessageDialog(this, "Please select all dropdown options!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        String patientId = patient.split(" - ")[0];
+        String doctorId = doctor.split(" - ")[0];
         AppointmentStatus status = AppointmentStatus.valueOf(((String) jComboBox5.getSelectedItem()).toUpperCase());
-        String notes = jTextArea1.getText();
 
         Appointment appt = new Appointment(
                 appointmentId,
@@ -326,15 +336,15 @@ public class AddOrUpdateAppointment extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void piActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_piActionPerformed
-        // TODO add your handling code here:
+        
     }//GEN-LAST:event_piActionPerformed
 
     private void pi6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pi6ActionPerformed
-        // TODO add your handling code here:
+        
     }//GEN-LAST:event_pi6ActionPerformed
 
     private void pi7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pi7ActionPerformed
-        // TODO add your handling code here:
+        
     }//GEN-LAST:event_pi7ActionPerformed
 
 

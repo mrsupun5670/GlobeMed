@@ -21,7 +21,9 @@ public class Billing extends javax.swing.JPanel {
         });
 
         jComboBox1.addActionListener(e -> loadBills());
-
+        
+        // Load bills on startup
+        loadBills();
     }
 
     private void loadBills() {

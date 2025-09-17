@@ -1,5 +1,7 @@
 package gui;
 
+import javax.swing.JOptionPane;
+
 public class PayBill extends javax.swing.JFrame {
 
     private model.Bill bill;
@@ -22,7 +24,20 @@ public class PayBill extends javax.swing.JFrame {
         textField1.setText(bill.getPatientId());
         textField3.setText(bill.getService());
         textField4.setText(String.valueOf(bill.getAmount()));
-        textField2.setText(String.valueOf(bill.getPaidAmount()));
+        
+        // Make Patient ID, Service, and Amount fields read-only
+        textField1.setEditable(false);
+        textField1.setBackground(new java.awt.Color(240, 240, 240));
+        textField3.setEditable(false);
+        textField3.setBackground(new java.awt.Color(240, 240, 240));
+        textField4.setEditable(false);
+        textField4.setBackground(new java.awt.Color(240, 240, 240));
+        
+        // Set payment field to zero for new payment entry (user will enter the payment amount)
+        textField2.setText("0.00");
+        textField2.setEditable(true); // Ensure payment field is editable
+        textField2.setBackground(java.awt.Color.WHITE); // White background for editable field
+        
         jComboBox1.setSelectedItem(bill.getPaymentType().name());
         jComboBox2.setSelectedItem(bill.getStatus().name());
     }
@@ -68,7 +83,7 @@ public class PayBill extends javax.swing.JFrame {
             }
         });
 
-        jButton2.setText("Clear");
+        jButton2.setText("Close");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
@@ -189,8 +204,21 @@ public class PayBill extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         try {
-            double billAmount = Double.parseDouble(textField4.getText().trim());
-            double paymentAmount = Double.parseDouble(textField2.getText().trim());
+            String billAmountText = textField4.getText().trim();
+            String paymentAmountText = textField2.getText().trim();
+            
+            if (billAmountText.isEmpty() || paymentAmountText.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Bill amount and payment amount are required!", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            double billAmount = Double.parseDouble(billAmountText);
+            double paymentAmount = Double.parseDouble(paymentAmountText);
+            
+            if (billAmount <= 0 || paymentAmount <= 0) {
+                JOptionPane.showMessageDialog(this, "Amounts must be greater than zero!", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             String selectedPaymentType = jComboBox1.getSelectedItem().toString();
             String selectedStatus = jComboBox2.getSelectedItem().toString();
 
@@ -199,15 +227,18 @@ public class PayBill extends javax.swing.JFrame {
             cashHandler.setNext(insuranceHandler);
 
             double cash = 0, insurance = 0;
-            switch (model.PaymentType.valueOf(selectedPaymentType)) {
-                case CASH ->
+            model.PaymentType paymentType = model.PaymentType.valueOf(selectedPaymentType);
+            switch (paymentType) {
+                case CASH:
                     cash = paymentAmount;
-                case INSURANCE ->
+                    break;
+                case INSURANCE:
                     insurance = paymentAmount;
-                case MIXED -> {
+                    break;
+                case MIXED:
                     cash = paymentAmount / 2;
                     insurance = paymentAmount / 2;
-                }
+                    break;
             }
 
             cashHandler.handle(bill, cash, insurance);
@@ -228,11 +259,12 @@ public class PayBill extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-
+        // Close button functionality
+        this.dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void textField3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textField3ActionPerformed
-        // TODO add your handling code here:
+        
     }//GEN-LAST:event_textField3ActionPerformed
 
 

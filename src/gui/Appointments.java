@@ -7,16 +7,23 @@ import mediator.AppointmentMediator;
 import model.Appointment;
 import model.Doctor;
 import model.Patient;
+import model.Role;
 import util.DBData;
 
 public class Appointments extends javax.swing.JPanel {
 
    private AppointmentMediator mediator;
+   private model.User currentUser;
 
  public Appointments() {
      initComponents();
          loadAppointmentsFromMediator();
         setupListeners();
+    }
+    
+    public void setCurrentUser(model.User user) {
+        this.currentUser = user;
+        loadAppointmentsFromMediator(); // Reload with user context
     }
 public void setMediator(AppointmentMediator mediator) {
     this.mediator = mediator;
@@ -25,7 +32,20 @@ public void setMediator(AppointmentMediator mediator) {
     public void loadAppointmentsFromMediator() {
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
         model.setRowCount(0);
-        for (Appointment appt : DBData.appointments()) {
+        
+        List<Appointment> appointmentsToShow = DBData.appointments();
+        
+        // Filter appointments based on user role  
+        if (currentUser != null && currentUser.getRole() == Role.DOCTOR) {
+            appointmentsToShow = new java.util.ArrayList<>();
+            for (Appointment appt : DBData.appointments()) {
+                if (appt.getDoctorId().equals(currentUser.getUsername())) {
+                    appointmentsToShow.add(appt);
+                }
+            }
+        }
+        
+        for (Appointment appt : appointmentsToShow) {
             Patient patient = DBData.patients().get(appt.getPatientId());
             Doctor doctor = DBData.doctors().get(appt.getDoctorId());
             model.addRow(new Object[]{
@@ -227,4 +247,17 @@ public void setMediator(AppointmentMediator mediator) {
     private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables
+    
+    public void highlightResolvedConflict(String appointmentId) {
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        for (int i = 0; i < model.getRowCount(); i++) {
+            if (model.getValueAt(i, 0).toString().equals(appointmentId)) {
+                jTable1.setRowSelectionInterval(i, i);
+                JOptionPane.showMessageDialog(this, 
+                    "Appointment " + appointmentId + " conflict resolved!",
+                    "Conflict Resolution", JOptionPane.INFORMATION_MESSAGE);
+                break;
+            }
+        }
+    }
 }
